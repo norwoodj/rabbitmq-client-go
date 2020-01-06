@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
 )
 
@@ -17,21 +16,27 @@ func (connection *ServerConnection) Close() {
 	connection.connection.Close()
 }
 
-func NewServerConnection(config *Config) (*ServerConnection, error) {
+func NewServerConnection(
+	config *Config,
+	host string,
+	username string,
+	password string,
+	port int,
+) (*ServerConnection, error) {
 	censoredRabbitDsn := formatRabbitMqDsn(
-		viper.GetString("rabbitmq-host"),
-		viper.GetString("rabbitmq-username"),
+		host,
+		username,
 		"********",
-		viper.GetInt("rabbitmq-port"),
+		port,
 	)
 
 	log.Infof("Connecting to RabbitMQ server %s", censoredRabbitDsn)
 
 	rabbitDsn := formatRabbitMqDsn(
-		viper.GetString("rabbitmq-host"),
-		viper.GetString("rabbitmq-username"),
-		viper.GetString("rabbitmq-password"),
-		viper.GetInt("rabbitmq-port"),
+		host,
+		username,
+		password,
+		port,
 	)
 
 	connection, err := amqp.Dial(rabbitDsn)
