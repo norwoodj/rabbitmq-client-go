@@ -67,22 +67,44 @@ func (consumer *Consumer) ConsumeMessages(quit chan bool, startErrorChannel chan
 	close(startErrorChannel)
 
 	go func() {
-		for msg := range msgPipe {
-			err := consumer.worker.HandleMessage(&msg)
-			if err != nil {
-				log.Warnf("Failed to handle message: %s", err)
-				err = msg.Nack(false, false)
+		for {
+			for msg := range msgPipe {
+				err := consumer.worker.HandleMessage(&msg)
+
 				if err != nil {
-					log.Warnf("Failed to nack message, dropping: %s", err)
+					log.Warnf("Failed to handle message: %s", err)
+
+					err = msg.Nack(false, false)
+					if err != nil {
+						log.Warnf("Failed to nack message on queue %s, attempting restart channel: %s", queueName, err)
+						break
+					}
+
+					continue
 				}
 
-				continue
+				err = msg.Ack(false)
+				if err != nil {
+					log.Warnf("Failed to ack message on queue %s, attempting restart channel: %s", queueName, err)
+					break
+				}
 			}
 
-			err = msg.Ack(false)
+			log.Infof("Attempting to restart consumer channel on queue %s, consumer exiting: %s", queueName, err)
+			msgPipe, err = consumer.channel.Consume(
+				queueName,
+				"",
+				false,
+				false,
+				false,
+				false,
+				nil,
+			)
+
 			if err != nil {
-				log.Warnf("Failed to ack message: %s", err)
-				continue
+				log.Errorf("Failed to restart channel, consumer exiting: %s", err)
+				close(quit)
+				return
 			}
 		}
 	}()
