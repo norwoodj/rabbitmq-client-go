@@ -16,30 +16,23 @@ func (connection *ServerConnection) Close() {
 	connection.connection.Close()
 }
 
-func NewServerConnection(
-	config *Config,
-	host string,
-	port int,
-	virtualHost string,
-	username string,
-	password string,
-) (*ServerConnection, error) {
+func NewServerConnection(config *Config) (*ServerConnection, error) {
 	censoredRabbitDsn := formatRabbitMqDsn(
-		host,
-		port,
-		virtualHost,
-		username,
+		config.Hostname,
+		config.Port,
+		config.VirtualHost,
+		config.Username,
 		"********",
 	)
 
 	log.Infof("Connecting to RabbitMQ server %s", censoredRabbitDsn)
 
 	rabbitDsn := formatRabbitMqDsn(
-		host,
-		port,
-		virtualHost,
-		username,
-		password,
+		config.Hostname,
+		config.Port,
+		config.VirtualHost,
+		config.Username,
+		config.Password,
 	)
 
 	connection, err := amqp.Dial(rabbitDsn)

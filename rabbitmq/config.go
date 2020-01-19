@@ -3,6 +3,7 @@ package rabbitmq
 type Config struct {
 	// Connection fields
 	Hostname    string
+	Port        int
 	Username    string
 	Password    string
 	VirtualHost string
@@ -17,12 +18,14 @@ type Config struct {
 
 func NewConfig(
 	hostname string,
+	port int,
 	username string,
 	password string,
 	virtualHost string,
 ) *Config {
 	return &Config{
 		Hostname:               hostname,
+		Port:                   port,
 		Username:               username,
 		Password:               password,
 		VirtualHost:            virtualHost,
