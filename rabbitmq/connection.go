@@ -19,24 +19,27 @@ func (connection *ServerConnection) Close() {
 func NewServerConnection(
 	config *Config,
 	host string,
+	port int,
+	virtualHost string,
 	username string,
 	password string,
-	port int,
 ) (*ServerConnection, error) {
 	censoredRabbitDsn := formatRabbitMqDsn(
 		host,
+		port,
+		virtualHost,
 		username,
 		"********",
-		port,
 	)
 
 	log.Infof("Connecting to RabbitMQ server %s", censoredRabbitDsn)
 
 	rabbitDsn := formatRabbitMqDsn(
 		host,
+		port,
+		virtualHost,
 		username,
 		password,
-		port,
 	)
 
 	connection, err := amqp.Dial(rabbitDsn)
@@ -52,15 +55,17 @@ func NewServerConnection(
 
 func formatRabbitMqDsn(
 	hostname string,
+	port int,
+	virtualHost string,
 	username string,
 	password string,
-	port int,
 ) string {
 	return fmt.Sprintf(
-		"amqp://%s:%s@%s:%d/",
+		"amqp://%s:%s@%s:%d/%s",
 		username,
 		password,
 		hostname,
 		port,
+		virtualHost,
 	)
 }

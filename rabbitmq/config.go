@@ -2,9 +2,10 @@ package rabbitmq
 
 type Config struct {
 	// Connection fields
-	Hostname string
-	Username string
-	Password string
+	Hostname    string
+	Username    string
+	Password    string
+	VirtualHost string
 
 	// Routing Configuration
 	DeadLetterExchangeName string
@@ -18,11 +19,13 @@ func NewConfig(
 	hostname string,
 	username string,
 	password string,
+	virtualHost string,
 ) *Config {
 	return &Config{
 		Hostname:               hostname,
 		Username:               username,
 		Password:               password,
+		VirtualHost:            virtualHost,
 		DeadLetterExchangeName: DefaultDeadLetterExchangeName,
 		DeadLetterQueueSuffix:  DefaultDeadLetterQueueSuffix,
 		QueueNamingStrategy:    DefaultQueueNamingStrategy{},
