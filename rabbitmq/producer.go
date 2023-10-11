@@ -43,11 +43,19 @@ func (producer *Producer) PublishMessage(msg interface{}) error {
 		return fmt.Errorf("failed to serialize message for publishing: %s", err)
 	}
 
-	return producer.channel.Publish(
+	if err := producer.channel.Publish(
 		producer.exchangeName,
 		producer.routingKey,
 		false,
 		false,
 		amqp.Publishing{ContentType: producer.messageSerializer.GetContentType(), Body: serializedMsg},
-	)
+	); err != nil {
+		if err := producer.createNewChannel(); err != nil {
+			return fmt.Errorf("failed to publish and failed to re-establish channel: %s", err)
+		}
+
+		return err
+	}
+
+	return nil
 }

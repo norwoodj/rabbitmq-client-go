@@ -7,7 +7,7 @@ type MessageSerializer interface {
 	SerializeMessage(interface{}) ([]byte, error)
 }
 
-type JsonMessageSerializer struct {}
+type JsonMessageSerializer struct{}
 
 func (JsonMessageSerializer) GetContentType() string {
 	return "application/json"

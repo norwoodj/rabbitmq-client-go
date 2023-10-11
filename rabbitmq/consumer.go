@@ -91,6 +91,7 @@ func (consumer *Consumer) ConsumeMessages(quit chan bool, startErrorChannel chan
 			}
 
 			log.Infof("Attempting to restart consumer channel on queue %s, consumer exiting: %s", queueName, err)
+			consumer.createNewChannel()
 			msgPipe, err = consumer.channel.Consume(
 				queueName,
 				"",

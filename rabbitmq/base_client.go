@@ -7,6 +7,7 @@ import (
 )
 
 type BaseClient struct {
+	connection   *ServerConnection
 	channel      *amqp.Channel
 	config       *Config
 	exchangeName string
@@ -28,11 +29,12 @@ func newBaseRabbitmqClient(
 	}
 
 	baseClient := BaseClient{
-		channel: channel,
-		config: connection.config,
+		connection:   connection,
+		channel:      channel,
+		config:       connection.config,
 		exchangeName: exchangeName,
 		exchangeType: exchangeType,
-		routingKey: routingKey,
+		routingKey:   routingKey,
 	}
 
 	if declareRoutingTopology {
@@ -49,6 +51,17 @@ func newBaseRabbitmqClient(
 	}
 
 	return baseClient, nil
+}
+
+func (client *BaseClient) createNewChannel() error {
+	channel, err := client.connection.connection.Channel()
+
+	if err != nil {
+		return err
+	}
+
+	client.channel = channel
+	return nil
 }
 
 func (client BaseClient) declareRoutingTopology() error {
