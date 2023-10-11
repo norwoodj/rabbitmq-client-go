@@ -2,7 +2,7 @@ rabbitmq-client-go
 ==================
 This codebase houses a [golang](https://golang.org) client library for interacting with [rabbitmq](https://www.rabbitmq.com).
 
-Built on top of [streadway/amqp](https://github.com/streadway/amqp), it provides higher-level patterns for
+Built on top of [amqp091-go](https://github.com/rabbitmq/amqp091-go), it provides higher-level patterns for
 implementing consumers and producers of messages.
 
 ## Features

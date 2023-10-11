@@ -3,7 +3,7 @@ package rabbitmq
 import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type BaseClient struct {
